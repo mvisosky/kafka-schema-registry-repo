@@ -1,0 +1,27 @@
+# Maven Build Artifacts
+target/
+*.jar
+*.war
+*.ear
+
+# Maven Flatten Plugin (Temporary files created during build)
+.flattened-pom.xml
+flattened-pom.xml
+
+# IDE - IntelliJ
+.idea/
+*.iml
+out/
+
+# VS Code
+.vscode/
+
+# IDE - Eclipse
+.settings/
+.project
+.classpath
+bin/
+
+# OS Files
+.DS_Store
+Thumbs.db
