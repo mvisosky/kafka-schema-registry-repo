@@ -36,6 +36,7 @@
       "type": {
         "type": "enum",
         "name": "MessagePriority",
+        "namespace": "com.example.messaging.models.notifications.sms",
         "symbols": ["LOW", "NORMAL", "HIGH"]
       },
       "default": "NORMAL"
