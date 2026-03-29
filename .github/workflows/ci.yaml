@@ -97,10 +97,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set up JDK 25
+      - name: Set up JDK 11
         uses: actions/setup-java@v5
         with:
-          java-version: "25"
+          java-version: "11"
           distribution: "temurin"
           server-id: github
 
@@ -155,21 +155,16 @@ jobs:
       - name: Update Changelogs
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         env:
-          # The GitHub CLI requires the token to authenticate API calls
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           NEW_VER="${{ steps.semver.outputs.REV }}"
           DATE=$(date +%Y-%m-%d)
 
-          # 1. Fetch PR Data via GitHub CLI using the current commit SHA
-          # This queries GitHub for the PR that introduced this specific commit
+          # 1. Fetch PR Data via GitHub CLI
           PR_DATA=$(gh api /repos/${{ github.repository }}/commits/${{ github.sha }}/pulls || echo "[]")
-
-          # Extract Title and Body using jq (handling empty cases gracefully)
           PR_TITLE=$(echo "$PR_DATA" | jq -r '.[0].title // empty')
           PR_BODY=$(echo "$PR_DATA" | jq -r '.[0].body // empty')
 
-          # Fallback: If this was pushed directly to main (no PR), use the git commit message
           if [ -z "$PR_TITLE" ]; then
             PR_TITLE=$(git log -1 --pretty=format:%s)
             PR_BODY=$(git log -1 --pretty=format:%b)
@@ -180,7 +175,11 @@ jobs:
             if [ -d "$MOD" ]; then
               touch "$MOD/CHANGELOG.md"
               
-              # 3. Use a Heredoc to safely inject complex multi-line Markdown
+              # --- NEW: Extract the exact Group ID from the module's POM ---
+              # We use mvn help:evaluate to safely resolve the groupId, even if inherited from a parent
+              GROUP_ID=$(mvn help:evaluate -Dexpression=project.groupId -q -DforceStdout -f "$MOD/pom.xml")
+              
+              # 3. Inject the PR data AND the Maven coordinates using a Heredoc
               cat <<EOF > temp_entry.md
           ## [$NEW_VER] - $DATE
 
@@ -188,12 +187,20 @@ jobs:
 
           $PR_BODY
 
+          ### 📦 Maven Coordinates
+          Add the following dependency to your \`pom.xml\` to consume this version from GitHub Packages:
+
+          \`\`\`xml
+          <dependency>
+              <groupId>$GROUP_ID</groupId>
+              <artifactId>$MOD</artifactId>
+              <version>$NEW_VER</version>
+          </dependency>
+          \`\`\`
+
           EOF
               
-              # Append the old changelog to the bottom of our new entry
               cat "$MOD/CHANGELOG.md" >> temp_entry.md 2>/dev/null || true
-              
-              # Overwrite the actual changelog with the combined file
               mv temp_entry.md "$MOD/CHANGELOG.md"
               
               git config user.name "github-actions[bot]"
