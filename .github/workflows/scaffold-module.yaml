@@ -48,6 +48,7 @@ jobs:
             - name: Scaffold Directory & Child POM
               run: |
                   MODULE_NAME="${{ inputs.module_name }}"
+                  MODULE_ARTIFACT_ID="${{ inputs.module_name }}-schemas"
                   MODULE_DISPLAY_NAME="${{ inputs.module_display_name }}"
                   MODULE_DESC="${{ inputs.module_desc }}"
 
@@ -76,7 +77,7 @@ jobs:
                           <maven.deploy.skip>false</maven.deploy.skip>
                       </properties>
 
-                      <artifactId>$MODULE_NAME</artifactId>
+                      <artifactId>$MODULE_ARTIFACT_ID</artifactId>
                       <packaging>jar</packaging>
 
                       <name>$MODULE_DISPLAY_NAME</name>
