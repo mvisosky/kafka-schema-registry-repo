@@ -1,3 +1,20 @@
+## [1.5.1] - 2026-03-29
+
+**fix: rename  FlightTailswapEvent to avro schema extension**
+
+
+
+### 📦 Maven Coordinates
+Add the following dependency to your `pom.xml` to consume this version from GitHub Packages:
+
+```xml
+<dependency>
+    <groupId>com.example.messaging.schemas</groupId>
+    <artifactId>flightops</artifactId>
+    <version>1.5.1</version>
+</dependency>
+```
+
 ## [1.2.0] - 2026-03-29
 
 **feat: revamp flightops schemas**
