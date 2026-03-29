@@ -82,8 +82,10 @@ jobs:
   # ==========================================
   deploy:
     runs-on: ubuntu-latest
-    needs: detect # <--- Wait for Job 1 to finish
-    if: needs.detect.outputs.any_changed == 'true' # <--- The Master Gatekeeper
+    # Wait for detect job to finish
+    needs: detect
+    # Only run if detect job found changed modules
+    if: needs.detect.outputs.any_changed == 'true'
     permissions:
       contents: write
       packages: write
@@ -187,3 +189,17 @@ jobs:
           NEW_VER="${{ steps.semver.outputs.REV }}"
           git tag "v$NEW_VER"
           git push origin "v$NEW_VER"
+
+      - name: Publish Run Summary
+        if: always()
+        run: |
+          echo "### 🚀 Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "**Version:** \`${{ steps.semver.outputs.REV }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Event:** \`${{ github.event_name }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "#### 📦 Modules Updated:" >> $GITHUB_STEP_SUMMARY
+
+          # Loop through the array and print each module as a bullet point
+          for MOD in ${{ needs.detect.outputs.bash_array }}; do
+            echo "- \`$MOD\`" >> $GITHUB_STEP_SUMMARY
+          done
