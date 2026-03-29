@@ -13,6 +13,7 @@
     <description>Centralized Avro Schema Management with Semantic Versioning</description>
 
     <modules>
+        <module>ecommerce</module>
         <module>flightops</module>
         <module>notification</module>
     </modules>
