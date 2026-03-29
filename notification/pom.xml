@@ -5,17 +5,21 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.example.schemas</groupId>
+        <groupId>com.example.messaging.schemas</groupId>
         <artifactId>schema-parent</artifactId>
         <version>${revision}</version>
         <relativePath>../pom.xml</relativePath> 
     </parent>
 
-    <artifactId>flightops-schemas</artifactId>
+    <properties>
+        <maven.deploy.skip>false</maven.deploy.skip>
+    </properties>
+
+    <artifactId>notification-schemas</artifactId>
     <packaging>jar</packaging>
 
-    <name>Flight Operations Schemas</name>
-    <description>Avro schemas specific to Flight Operations domain</description>
+    <name>Notification Schemas</name>
+    <description>Avro schemas specific to Notification domain</description>
 
     <build>
         <plugins>

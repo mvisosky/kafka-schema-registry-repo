@@ -4,8 +4,8 @@ This repository manages Avro schemas for our distributed systems, organized by b
 
 ## 📁 Project Structure
 
-* `flightops-schemas/`: Schemas for Flight Operations (e.g., Gate Changes, ETD).
-* `notification-schemas/`: Schemas for Notifications (e.g., Email Requests, SMS Requests).
+* `flightops/`: Schemas for Flight Operations (e.g., Gate Changes, ETD).
+* `notification/`: Schemas for Notifications (e.g., Email Requests, SMS Requests).
 * `pom.xml`: The Parent POM managing shared dependencies and build logic.
 
 ## 🚀 How to Add or Update Schemas
