@@ -1,0 +1,17 @@
+{
+  "type": "record",
+  "name": "FlightDepartureTimeChangedEvent",
+  "namespace": "com.example.messaging.models.flightops",
+  "fields": [
+    {"name": "eventId", "type": "string"},
+    {"name": "timestamp", "type": "long", "logicalType": "timestamp-millis"},
+    {"name": "flightKey", "type": "com.example.messaging.models.flightops.FlightKey"},
+    {"name": "originalDepartureTime", "type": "long", "logicalType": "timestamp-millis"},
+    {"name": "estimatedDepartureTime", "type": "long", "logicalType": "timestamp-millis"},
+    {"name": "delayMinutes", "type": "int"},
+    {
+      "name": "delayReason",
+      "type": {"type": "enum", "name": "DelayReason", "symbols": ["WEATHER", "ATC", "MAINTENANCE", "LATE_INBOUND", "CREW", "OTHER"]}
+    }
+  ]
+}

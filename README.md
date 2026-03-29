@@ -1,6 +1,6 @@
-# Schema Registry (Multi-Module)
+# Kafka Schema Registry (Module Per Domain)
 
-This repository manages Avro schemas for our distributed systems, organized by business domain. It uses an automated CI/CD pipeline to compile, test, version, and deploy schema JARs to our private Maven registry.
+This repository manages Avro schemas for Kafka messaging, organized by business domain. It uses an automated CI/CD pipeline to compile, test, version, and deploy schema JARs to a Maven registry.
 
 ## 📁 Project Structure
 
@@ -37,7 +37,7 @@ Each module maintains its own `CHANGELOG.md`. The CI bot automatically appends t
 ## 🛠️ Local Development Tips
 
 ### Requirements
-* **Java 25**
+* **Java 11**
 * **Maven 3.6.3+**
 
 ### Useful Commands
