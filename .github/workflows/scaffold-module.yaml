@@ -33,19 +33,13 @@ jobs:
               run: |
                   MODULE_NAME="${{ inputs.module_name }}"
 
-                  # 1. Enforce Naming Convention
-                  if [[ "$MODULE_NAME" != *-schemas ]]; then
-                    echo "::error::Module name must end with '-schemas'."
-                    exit 1
-                  fi
-
-                  # 2. Prevent Duplicates
+                  # 1. Prevent Duplicates
                   if [ -d "$MODULE_NAME" ]; then
                     echo "::error::Directory $MODULE_NAME already exists!"
                     exit 1
                   fi
 
-                  # 3. Create a unique branch name
+                  # 2. Create a unique branch name
                   BRANCH_NAME="scaffold/${MODULE_NAME}-$(date +%s)"
                   echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
 
