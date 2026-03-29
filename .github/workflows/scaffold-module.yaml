@@ -114,7 +114,7 @@ jobs:
                   git push -u origin "$BRANCH_NAME"
 
             - name: Create Pull Request
-              id: create_pr # <-- Added an ID so we can reference its outputs
+              id: create_pr
               env:
                   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               run: |
