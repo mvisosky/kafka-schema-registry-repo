@@ -16,6 +16,7 @@
         <module>ecommerce</module>
         <module>flightops</module>
         <module>notification</module>
+        <module>human-resources</module>
     </modules>
 
     <properties>
