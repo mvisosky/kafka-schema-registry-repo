@@ -112,10 +112,6 @@ jobs:
         with:
           tag_name: v${{ steps.semver.outputs.REV }}
           name: Release v${{ steps.semver.outputs.REV }}
-          body: |
-            ## Automated Release v${{ steps.semver.outputs.REV }}
-            $(git log -1 --pretty=%B)
-          draft: false
-          prerelease: false
+          generate_release_notes: true # <-- This does the heavy lifting beautifully
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
