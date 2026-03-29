@@ -1,6 +1,6 @@
 {
   "type": "record",
-  "name": "EmailNotification",
+  "name": "EmailRequest",
   "namespace": "com.example.messaging.models.notifications",
   "doc": "Schema for sending an email notification",
   "fields": [
