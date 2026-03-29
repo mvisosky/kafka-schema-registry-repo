@@ -17,6 +17,7 @@
         <module>flightops</module>
         <module>notification</module>
         <module>human-resources</module>
+        <module>project-management</module>
     </modules>
 
     <properties>
