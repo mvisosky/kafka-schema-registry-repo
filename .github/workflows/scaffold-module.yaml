@@ -124,7 +124,7 @@ jobs:
 
                   # Capture the output of the gh command (which is the new PR URL)
                   PR_URL=$(gh pr create \
-                     --title "build: scaffold $MODULE_NAME" \
+                     --title "feat: Scaffold new module $MODULE_NAME" \
                      --body "This PR automatically scaffolds the directory structure, child \`pom.xml\`, and updates the parent \`pom.xml\` for the new **$MODULE_NAME** domain." \
                      --base main \
                      --head "$BRANCH_NAME")
