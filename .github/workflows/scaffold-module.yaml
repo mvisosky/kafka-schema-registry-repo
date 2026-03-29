@@ -5,15 +5,15 @@ on:
     workflow_dispatch:
         inputs:
             module_name:
-                description: "Module Name (MUST end in -schemas, e.g., payment-schemas)"
+                description: "Module Name (i.e. human-resources)"
                 required: true
                 type: string
             module_name_display:
-                description: "Module Name Display (e.g., Payment Schemas)"
+                description: "Module Name Display (e.g. Human Resources Schemas)"
                 required: true
                 type: string
             module_desc:
-                description: "Short description for the Maven POM"
+                description: "Short description for the Maven POM (e.g. Avro schemas specific to Human Resources domain)"
                 required: true
                 type: string
 
