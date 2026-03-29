@@ -4,19 +4,18 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.example.messaging.schemas</groupId>
+    <groupId>com.example.kafka.schemas</groupId>
     <artifactId>schema-parent</artifactId>
     <version>${revision}</version>
     <packaging>pom</packaging>
-
-    <name>Schema Registry Parent</name>
-    <description>Centralized Avro Schema Management with Semantic Versioning</description>
+    
+    <description>Centralized JSON and Avro Schema Management with Semantic Versioning</description>
 
     <modules>
-        <module>ecommerce</module>
-        <module>flightops</module>
-        <module>notification</module>
-        <module>human-resources</module>
+        <module>ecommerce-schemas</module>
+        <module>flightops-schemas</module>
+        <module>notification-schemas</module>
+        <module>humanresources-schemas</module>
     </modules>
 
     <properties>
@@ -27,6 +26,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         
         <avro.version>1.12.1</avro.version>
+        <jsonschema2pojo.version>1.3.3</jsonschema2pojo.version>
         <enforcer.version>3.6.2</enforcer.version>
         <maven.jar.version>3.5.0</maven.jar.version>
         <flatten.plugin.version>1.7.3</flatten.plugin.version>
@@ -59,6 +59,33 @@
                             </configuration>
                         </execution>
                     </executions>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.jsonschema2pojo</groupId>
+                    <artifactId>jsonschema2pojo-maven-plugin</artifactId>
+                    <version>${jsonschema2pojo.version}</version>
+                    <executions>
+                        <execution>
+                        <phase>generate-sources</phase>
+                            <goals>
+                                <goal>generate</goal>
+                            </goals>                            
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <sourceDirectory>${basedir}/src/main/json/</sourceDirectory>
+                        <targetPackage>com.example.kafka.schemas.json.${schema.packageName}</targetPackage>
+                        <outputDirectory>${project.build.directory}/generated-sources/json</outputDirectory>
+                        <generateBuilders>true</generateBuilders>
+                        <annotationStyle>jackson2</annotationStyle>
+                        <includes>
+                            <include>**/*.json</include>
+                        </includes>
+                        <excludes>
+                            <exclude>**/.keep</exclude>
+                        </excludes>
+                    </configuration>
                 </plugin>
 
                 <plugin>

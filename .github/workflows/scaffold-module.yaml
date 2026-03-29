@@ -1,19 +1,14 @@
 name: Scaffold New Schema Module
 
-# The workflow_dispatch event creates a UI form in the GitHub Actions tab
 on:
     workflow_dispatch:
         inputs:
             module_name:
-                description: "Module Name (i.e. human-resources)"
-                required: true
-                type: string
-            module_display_name:
-                description: "Module Display Name (e.g. Human Resources Schemas)"
+                description: "Module Name (MUST end in -schemas)"
                 required: true
                 type: string
             module_desc:
-                description: "Short description for the Maven POM (e.g. Avro schemas specific to Human Resources domain)"
+                description: "Short description for the Maven POM"
                 required: true
                 type: string
 
@@ -22,7 +17,7 @@ jobs:
         runs-on: ubuntu-latest
         permissions:
             contents: write
-            pull-requests: write # Required to open a PR via the GitHub CLI
+            pull-requests: write
 
         steps:
             - name: Checkout Repository
@@ -33,32 +28,47 @@ jobs:
               run: |
                   MODULE_NAME="${{ inputs.module_name }}"
 
-                  # 1. Prevent Duplicates
-                  if [ -d "$MODULE_NAME" ]; then
-                    echo "::error::Directory $MODULE_NAME already exists!"
-                    exit 1
+                  # 1. Enforce the suffix convention
+                  if [[ "$MODULE_NAME" != *-schemas ]]; then
+                      echo "::error::Module name must end with '-schemas' (e.g., payment-schemas)."
+                      exit 1
                   fi
 
-                  # 2. Create a unique branch name
+                  # 2. Extract the prefix and enforce NO internal hyphens
+                  PREFIX="${MODULE_NAME%-schemas}"
+                  if [[ "$PREFIX" == *-* ]]; then
+                      echo "::error::The module prefix '$PREFIX' cannot contain hyphens. This ensures a valid Java package name. Use 'flightops' instead of 'flight-ops'."
+                      exit 1
+                  fi
+
+                  # 3. Prevent Duplicates
+                  if [ -d "$MODULE_NAME" ]; then
+                      echo "::error::Directory $MODULE_NAME already exists!"
+                      exit 1
+                  fi
+
+                  # 4. Create a unique branch name
                   BRANCH_NAME="scaffold/${MODULE_NAME}-$(date +%s)"
                   echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
-
                   git checkout -b "$BRANCH_NAME"
 
             - name: Scaffold Directory & Child POM
               run: |
                   MODULE_NAME="${{ inputs.module_name }}"
-                  MODULE_ARTIFACT_ID="${{ inputs.module_name }}-schemas"
-                  MODULE_DISPLAY_NAME="${{ inputs.module_display_name }}"
                   MODULE_DESC="${{ inputs.module_desc }}"
 
-                  # 1. Create standard Maven/Avro directory structure
-                  mkdir -p "$MODULE_NAME/src/main/avro"
+                  # Strip the "-schemas" suffix to create a valid Java package name
+                  # e.g., "flightops-schemas" becomes "flightops"
+                  PACKAGE_NAME="${MODULE_NAME%-schemas}"
 
-                  # 2. Add a dummy placeholder file so Git tracks the Avro folder
+                  # 1. Unconditionally create BOTH directories
+                  mkdir -p "$MODULE_NAME/src/main/avro"
                   echo "// Place your .avsc files here" > "$MODULE_NAME/src/main/avro/.keep"
 
-                  # 3. Generate the perfectly formatted Child POM using a Heredoc
+                  mkdir -p "$MODULE_NAME/src/main/json"
+                  echo "// Place your .json files here" > "$MODULE_NAME/src/main/json/.keep"
+
+                  # 2. Generate the POM
                   cat <<EOF > "$MODULE_NAME/pom.xml"
                   <?xml version="1.0" encoding="UTF-8"?>
                   <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -67,84 +77,61 @@ jobs:
                       <modelVersion>4.0.0</modelVersion>
 
                       <parent>
-                          <groupId>com.example.messaging.schemas</groupId>
+                          <groupId>com.yourcompany.schemas</groupId>
                           <artifactId>schema-parent</artifactId>
                           <version>\${revision}</version>
                           <relativePath>../pom.xml</relativePath>
                       </parent>
 
-                      <properties>
-                          <maven.deploy.skip>false</maven.deploy.skip>
-                      </properties>
-
-                      <artifactId>$MODULE_ARTIFACT_ID</artifactId>
-                      <packaging>jar</packaging>
-
-                      <name>$MODULE_DISPLAY_NAME</name>
+                      <artifactId>$MODULE_NAME</artifactId>
                       <description>$MODULE_DESC</description>
 
+                      <properties>
+                          <maven.deploy.skip>false</maven.deploy.skip>
+                          <schema.packageName>$PACKAGE_NAME</schema.packageName>
+                      </properties>
+
                       <build>
-                        <plugins>
+                          <plugins>
                             <plugin>
                                 <groupId>org.apache.avro</groupId>
                                 <artifactId>avro-maven-plugin</artifactId>
                             </plugin>
-                        </plugins>
+                            <plugin>
+                                <groupId>org.jsonschema2pojo</groupId>
+                                <artifactId>jsonschema2pojo-maven-plugin</artifactId>
+                            </plugin>
+                          </plugins>
                       </build>
                   </project>
                   EOF
 
             - name: Update Parent POM
               run: |
-                  MODULE_NAME="${{ inputs.module_name }}"
-
-                  # Use standard 'sed' to inject the new module right before the closing </modules> tag
-                  # This ensures the parent POM's Reactor is correctly updated
-                  sed -i "s|</modules>|    <module>${MODULE_NAME}</module>\n    </modules>|g" pom.xml
+                  sed -i "s|</modules>|    <module>${{ inputs.module_name }}</module>\n    </modules>|g" pom.xml
 
             - name: Commit & Push Branch
               run: |
-                  MODULE_NAME="${{ inputs.module_name }}"
-                  BRANCH_NAME="${{ steps.setup.outputs.branch_name }}"
-
                   git config user.name "github-actions[bot]"
                   git config user.email "github-actions[bot]@users.noreply.github.com"
-
                   git add .
-                  git commit -m "feat: Scaffold new module $MODULE_NAME"
-                  git push -u origin "$BRANCH_NAME"
+                  git commit -m "build: scaffold new ${{ inputs.schema_format }} module ${{ inputs.module_name }}"
+                  git push -u origin "${{ steps.setup.outputs.branch_name }}"
 
             - name: Create Pull Request
               id: create_pr
               env:
                   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               run: |
-                  MODULE_NAME="${{ inputs.module_name }}"
-                  BRANCH_NAME="${{ steps.setup.outputs.branch_name }}"
-
-                  # Capture the output of the gh command (which is the new PR URL)
                   PR_URL=$(gh pr create \
-                     --title "feat: Scaffold new module $MODULE_NAME" \
-                     --body "This PR automatically scaffolds the directory structure, child \`pom.xml\`, and updates the parent \`pom.xml\` for the new **$MODULE_NAME** domain." \
-                     --base main \
-                     --head "$BRANCH_NAME")
-
-                  # Export the URL so the next step can use it
+                    --title "build: scaffold ${{ inputs.module_name }}" \
+                    --body "This PR scaffolds the directory structure and child \`pom.xml\` for the new **${{ inputs.module_name }}** domain, configured for **${{ inputs.schema_format }}**." \
+                    --base main \
+                    --head "${{ steps.setup.outputs.branch_name }}")
                   echo "pr_url=$PR_URL" >> $GITHUB_OUTPUT
 
             - name: Publish Run Summary
               run: |
-                  MODULE_NAME="${{ inputs.module_name }}"
-                  BRANCH_NAME="${{ steps.setup.outputs.branch_name }}"
-                  PR_URL="${{ steps.create_pr.outputs.pr_url }}"
-
                   echo "### 🎉 Module Scaffolded Successfully!" >> $GITHUB_STEP_SUMMARY
-                  echo "The baseline directory structure and Maven configuration for **\`$MODULE_NAME\`** have been generated." >> $GITHUB_STEP_SUMMARY
-                  echo "" >> $GITHUB_STEP_SUMMARY
-                  echo "#### 🔗 [Click here to view your Pull Request]($PR_URL)" >> $GITHUB_STEP_SUMMARY
-                  echo "" >> $GITHUB_STEP_SUMMARY
-                  echo "#### 🛠️ Next Steps for the Developer:" >> $GITHUB_STEP_SUMMARY
-                  echo "1. Pull the branch locally: \`git fetch && git checkout $BRANCH_NAME\`" >> $GITHUB_STEP_SUMMARY
-                  echo "2. Add your \`.avsc\` schema definitions to \`$MODULE_NAME/src/main/avro/\`." >> $GITHUB_STEP_SUMMARY
-                  echo "3. Push your changes to trigger the validation pipeline." >> $GITHUB_STEP_SUMMARY
-                  echo "4. Merge the PR to publish your schemas to the registry." >> $GITHUB_STEP_SUMMARY
+                  echo "The baseline directory structure and Maven configuration for **\`${{ inputs.module_name }}\`** have been generated." >> $GITHUB_STEP_SUMMARY
+                  echo "#### 🔗 [Click here to view your Pull Request](${{ steps.create_pr.outputs.pr_url }})" >> $GITHUB_STEP_SUMMARY

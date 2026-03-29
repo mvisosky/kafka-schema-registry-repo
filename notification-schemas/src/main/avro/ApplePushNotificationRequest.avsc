@@ -1,0 +1,80 @@
+{
+  "type": "record",
+  "name": "ApplePushNotificationRequest",
+  "namespace": "com.example.kafka.schemas.avro.notifications",
+  "doc": "Schema for Apple Push Notification service (APNs) request",
+  "fields": [
+    {
+      "name": "device_token",
+      "type": "string",
+      "doc": "The hexadecimal string of the target device token."
+    },
+    {
+      "name": "aps",
+      "type": {
+        "type": "record",
+        "name": "ApsPayload",
+        "namespace": "com.example.kafka.schemas.notifications.apns",
+        "fields": [
+          {
+            "name": "alert",
+            "type": [
+              "string",
+              {
+                "type": "record",
+                "name": "AlertDictionary",
+                "namespace": "com.example.kafka.schemas.notifications.apns",
+                "fields": [
+                  {"name": "title", "type": ["null", "string"], "default": null},
+                  {"name": "subtitle", "type": ["null", "string"], "default": null},
+                  {"name": "body", "type": "string"}
+                ]
+              }
+            ],
+            "doc": "Can be a simple string or a dictionary for localized titles/body."
+          },
+          {
+            "name": "badge",
+            "type": ["null", "int"],
+            "default": null
+          },
+          {
+            "name": "sound",
+            "type": ["null", "string"],
+            "default": null
+          },
+          {
+            "name": "content_available",
+            "type": ["null", "int"],
+            "default": null,
+            "doc": "Set to 1 for silent background updates."
+          },
+          {
+            "name": "category",
+            "type": ["null", "string"],
+            "default": null,
+            "doc": "The identifier for interactive notification types."
+          },
+          {
+            "name": "mutable_content",
+            "type": ["null", "int"],
+            "default": null,
+            "doc": "Set to 1 to allow Notification Service Extensions to modify the content."
+          }
+        ]
+      }
+    },
+    {
+      "name": "custom_data",
+      "type": [
+        "null",
+        {
+          "type": "map",
+          "values": "string"
+        }
+      ],
+      "default": null,
+      "doc": "Optional key-value pairs for app-specific logic outside the 'aps' dictionary."
+    }
+  ]
+}

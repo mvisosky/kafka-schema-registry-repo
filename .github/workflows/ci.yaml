@@ -160,7 +160,6 @@ jobs:
           NEW_VER="${{ steps.semver.outputs.REV }}"
           DATE=$(date +%Y-%m-%d)
 
-          # 1. Fetch PR Data via GitHub CLI
           PR_DATA=$(gh api /repos/${{ github.repository }}/commits/${{ github.sha }}/pulls || echo "[]")
           PR_TITLE=$(echo "$PR_DATA" | jq -r '.[0].title // empty')
           PR_BODY=$(echo "$PR_DATA" | jq -r '.[0].body // empty')
@@ -170,18 +169,25 @@ jobs:
             PR_BODY=$(git log -1 --pretty=format:%b)
           fi
 
-          # 2. Loop through the changed modules
           for MOD in ${{ needs.detect.outputs.bash_array }}; do
             if [ -d "$MOD" ]; then
               touch "$MOD/CHANGELOG.md"
               
-              # --- NEW: Extract the exact Group ID from the module's POM ---
-              # We use mvn help:evaluate to safely resolve the groupId, even if inherited from a parent
+              # --- NEW: Detect which schema types actually changed ---
+              # We check the git diff of the latest merge to see if specific file extensions were touched
+              AVRO_TOUCHED=$(git diff HEAD~1 HEAD --name-only | grep "^$MOD/.*\.avsc$" || true)
+              JSON_TOUCHED=$(git diff HEAD~1 HEAD --name-only | grep "^$MOD/.*\.json$" || true)
+              
+              TYPE_BADGES=""
+              if [ -n "$AVRO_TOUCHED" ]; then TYPE_BADGES="$TYPE_BADGES 🔵 **[Avro Updated]**"; fi
+              if [ -n "$JSON_TOUCHED" ]; then TYPE_BADGES="$TYPE_BADGES 🟢 **[JSON Updated]**"; fi
+              
               GROUP_ID=$(mvn help:evaluate -Dexpression=project.groupId -q -DforceStdout -f "$MOD/pom.xml")
               
-              # 3. Inject the PR data AND the Maven coordinates using a Heredoc
+              # Inject the dynamic badges right below the date
               cat <<EOF > temp_entry.md
           ## [$NEW_VER] - $DATE
+          $TYPE_BADGES
 
           **$PR_TITLE**
 

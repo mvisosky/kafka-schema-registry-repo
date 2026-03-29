@@ -1,0 +1,70 @@
+{
+  "type": "record",
+  "name": "FlightBookingEvent",
+  "namespace": "com.example.kafka.schemas.ecommerce.avro",
+  "doc": "Record of a passenger booking a seat on a specific flight leg.",
+  "fields": [
+    {
+      "name": "booking_reference",
+      "type": "string",
+      "doc": "The 6-character PNR (Passenger Name Record), e.g., 'G3XKJ2'."
+    },
+    {
+      "name": "bookingTimestamp",
+      "type": "long",
+      "logicalType": "timestamp-millis"
+    },
+    {
+      "name": "flightKey",
+      "type": "com.example.kafka.schemas.ecommerce.avro.FlightKey",
+      "doc": "Re-uses the common flight identifier."
+    },
+    {
+      "name": "passenger",
+      "type": {
+        "type": "record",
+        "name": "PassengerProfile",
+        "fields": [
+          {"name": "firstName", "type": "string"},
+          {"name": "lastName", "type": "string"},
+          {"name": "email", "type": "string"},
+          {"name": "frequentFlyerNumber", "type": ["null", "string"], "default": null}
+        ]
+      }
+    },
+    {
+      "name": "seatAssignment",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "e.g., '12A'. Null if seat is not yet selected."
+    },
+    {
+      "name": "fareClass",
+      "type": {
+        "type": "enum",
+        "name": "FareClass",
+        "symbols": ["ECONOMY", "PREMIUM_ECONOMY", "BUSINESS", "FIRST"]
+      }
+    },
+    {
+      "name": "payment",
+      "type": {
+        "type": "record",
+        "name": "PaymentSummary",
+        "fields": [
+          {"name": "transactionId", "type": "string"},
+          {"name": "amount", "type": "double"},
+          {"name": "currency", "type": "string", "doc": "ISO-4217 code, e.g., 'USD'"}
+        ]
+      }
+    },
+    {
+      "name": "status",
+      "type": {
+        "type": "enum",
+        "name": "BookingStatus",
+        "symbols": ["CONFIRMED", "PENDING", "CANCELLED", "REFUNDED"]
+      }
+    }
+  ]
+}
