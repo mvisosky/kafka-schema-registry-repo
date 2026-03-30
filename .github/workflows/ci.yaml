@@ -1,4 +1,4 @@
-name: Semantic Multi-Module Deploy
+name: Module Build and Deploy
 
 on:
   pull_request:

@@ -77,7 +77,7 @@ jobs:
                       <modelVersion>4.0.0</modelVersion>
 
                       <parent>
-                          <groupId>com.yourcompany.schemas</groupId>
+                          <groupId>com.example.kafka.schemas</groupId>
                           <artifactId>schema-parent</artifactId>
                           <version>\${revision}</version>
                           <relativePath>../pom.xml</relativePath>

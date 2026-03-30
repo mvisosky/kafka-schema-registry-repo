@@ -12,10 +12,6 @@
     <description>Centralized JSON and Avro Schema Management with Semantic Versioning</description>
 
     <modules>
-        <module>ecommerce-schemas</module>
-        <module>flightops-schemas</module>
-        <module>notification-schemas</module>
-        <module>humanresources-schemas</module>
     </modules>
 
     <properties>
