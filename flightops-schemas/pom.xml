@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.yourcompany.schemas</groupId>
+        <artifactId>schema-parent</artifactId>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>flightops-schemas</artifactId>
+    <description>Schemas for Flight Operations</description>
+
+    <properties>
+        <maven.deploy.skip>false</maven.deploy.skip>
+        <schema.packageName>flightops</schema.packageName>
+    </properties>
+
+    <build>
+        <plugins>
+          <plugin>
+              <groupId>org.apache.avro</groupId>
+              <artifactId>avro-maven-plugin</artifactId>
+          </plugin>
+          <plugin>
+              <groupId>org.jsonschema2pojo</groupId>
+              <artifactId>jsonschema2pojo-maven-plugin</artifactId>
+          </plugin>
+        </plugins>
+    </build>
+</project>
