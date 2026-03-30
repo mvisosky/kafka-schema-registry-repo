@@ -115,7 +115,7 @@ jobs:
                   git config user.name "github-actions[bot]"
                   git config user.email "github-actions[bot]@users.noreply.github.com"
                   git add .
-                  git commit -m "build: scaffold new ${{ inputs.schema_format }} module ${{ inputs.module_name }}"
+                  git commit -m "feat: scaffold new module ${{ inputs.module_name }}"
                   git push -u origin "${{ steps.setup.outputs.branch_name }}"
 
             - name: Create Pull Request
@@ -124,8 +124,8 @@ jobs:
                   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               run: |
                   PR_URL=$(gh pr create \
-                    --title "build: scaffold ${{ inputs.module_name }}" \
-                    --body "This PR scaffolds the directory structure and child \`pom.xml\` for the new **${{ inputs.module_name }}** domain, configured for **${{ inputs.schema_format }}**." \
+                    --title "feat: scaffold ${{ inputs.module_name }}" \
+                    --body "This PR scaffolds the directory structure and child \`pom.xml\` for the new **${{ inputs.module_name }}** module." \
                     --base main \
                     --head "${{ steps.setup.outputs.branch_name }}" \
                     --draft)
