@@ -12,6 +12,7 @@
     <description>Centralized JSON and Avro Schema Management with Semantic Versioning</description>
 
     <modules>
+        <module>flightops-schemas</module>
     </modules>
 
     <properties>
