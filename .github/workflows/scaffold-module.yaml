@@ -127,7 +127,8 @@ jobs:
                     --title "build: scaffold ${{ inputs.module_name }}" \
                     --body "This PR scaffolds the directory structure and child \`pom.xml\` for the new **${{ inputs.module_name }}** domain, configured for **${{ inputs.schema_format }}**." \
                     --base main \
-                    --head "${{ steps.setup.outputs.branch_name }}")
+                    --head "${{ steps.setup.outputs.branch_name }}" \
+                    --draft)
                   echo "pr_url=$PR_URL" >> $GITHUB_OUTPUT
 
             - name: Publish Run Summary
