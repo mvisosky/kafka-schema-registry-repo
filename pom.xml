@@ -13,6 +13,7 @@
 
     <modules>
         <module>flightops-schemas</module>
+        <module>humanresources-schemas</module>
     </modules>
 
     <properties>
