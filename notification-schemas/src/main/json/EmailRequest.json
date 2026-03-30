@@ -1,0 +1,42 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "title": "EmailRequest",
+    "type": "object",
+    "required": [
+        "to",
+        "subject",
+        "body"
+    ],
+    "properties": {
+        "to": {
+            "type": "array",
+            "items": {
+                "type": "string",
+                "format": "email"
+            },
+            "minItems": 1
+        },
+        "cc": {
+            "type": "array",
+            "items": {
+                "type": "string",
+                "format": "email"
+            }
+        },
+        "subject": {
+            "type": "string",
+            "minLength": 1
+        },
+        "body": {
+            "type": "string"
+        },
+        "isHtml": {
+            "type": "boolean",
+            "default": false
+        },
+        "templateId": {
+            "type": "string",
+            "description": "Optional ID if using a pre-defined CMS template"
+        }
+    }
+}

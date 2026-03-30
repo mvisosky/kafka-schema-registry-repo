@@ -1,0 +1,59 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "title": "ApplePushNotificationRequest",
+    "type": "object",
+    "required": [
+        "deviceToken",
+        "aps"
+    ],
+    "properties": {
+        "deviceToken": {
+            "type": "string",
+            "description": "The unique hex string for the target iOS device."
+        },
+        "aps": {
+            "type": "object",
+            "required": [
+                "alert"
+            ],
+            "properties": {
+                "alert": {
+                    "type": "object",
+                    "properties": {
+                        "title": {
+                            "type": "string"
+                        },
+                        "subtitle": {
+                            "type": "string"
+                        },
+                        "body": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "body"
+                    ]
+                },
+                "badge": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "sound": {
+                    "type": "string",
+                    "default": "default"
+                },
+                "mutable-content": {
+                    "type": "integer",
+                    "enum": [
+                        0,
+                        1
+                    ]
+                }
+            }
+        },
+        "customData": {
+            "type": "object",
+            "description": "Key-value pairs for application-specific logic."
+        }
+    }
+}

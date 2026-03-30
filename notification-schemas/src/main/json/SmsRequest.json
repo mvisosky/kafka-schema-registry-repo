@@ -1,0 +1,25 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "title": "SmsRequest",
+    "type": "object",
+    "required": [
+        "phoneNumber",
+        "message"
+    ],
+    "properties": {
+        "phoneNumber": {
+            "type": "string",
+            "pattern": "^\\+[1-9]\\d{1,14}$",
+            "description": "Phone number in E.164 format (e.g., +1234567890)"
+        },
+        "message": {
+            "type": "string",
+            "maxLength": 160,
+            "description": "Standard SMS limit is 160 chars; longer may be split."
+        },
+        "senderId": {
+            "type": "string",
+            "description": "Alphanumeric sender ID supported in some regions."
+        }
+    }
+}
