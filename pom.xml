@@ -16,6 +16,7 @@
         <module>flightops-schemas</module>
         <module>notification-schemas</module>
         <module>humanresources-schemas</module>
+        <module>flightops-schemas</module>
     </modules>
 
     <properties>
