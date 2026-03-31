@@ -1,13 +1,21 @@
 # Kafka Schema Registry (Module Per Domain)
 
+## :car: Roadmap
+
+- Multi-environment deployments where a given registry can host multiple environments (i.e. non-prod vs prod, regions)
+- Mappings for TopicNameStrategy and TopicRecordNameStrategy
+- Release versions for change control
+
+## :book: Description
+
 This repository manages Avro schemas for Kafka messaging, organized by business domain. It uses an automated CI/CD pipeline to compile, test, version, and deploy schema JARs to a Maven registry.
 
-## 📁 Project Structure
+## :file_folder: Project Structure
 
 * `pom.xml`: The Parent POM managing shared dependencies and build logic.
 * `*-schemas/`: Avro and JSON Schemas for a particular business domain or team. Directory includes automatically managed CHANGELOG and pom.xml files for the module.
 
-## 🚀 How to Scaffold a New Schema Module
+## :rocket: How to Scaffold a New Schema Module
 
 1. **Run Scaffold Action** https://github.com/mvisosky/kafka-schema-registry-repo/actions/workflows/scaffold-module.yaml
 2. **Provide Inputs**
@@ -20,8 +28,9 @@ This repository manages Avro schemas for Kafka messaging, organized by business 
     mvn clean package -Drevision=0.0.0-LOCAL -pl <module-name> -am
     ```
 6. **Commit changes and convert the draft PR to a PR:** Use the **Conventional Commits** format for your PR Title (see below).
+7. **Change default PR description:** Add details to the PR description covering what changes are represented in the PR. The PR title and description will be automatically appended to the CHANGELOG in your module. Markdown is permitted in the PR description.
 
-## 🚀 How to Add or Update Schemas
+## :rocket: How to Add or Update Schemas
 
 1.  **Create a Branch:** `git checkout -b feat/add-new-schema`
 2.  **Add/Edit .avsc and/or .json files:** Place your schemas in the module's `src/main/avro/` or `src/main/json/` directories.
@@ -31,7 +40,7 @@ This repository manages Avro schemas for Kafka messaging, organized by business 
     ```
 4.  **Submit a PR:** Use the **Conventional Commits** format for your PR Title (see below).
 
-## 🏷️ Automated Versioning (Conventional Commits)
+## 	:label: Automated Versioning (Conventional Commits)
 
 Our GitHub Action calculates the next version number based on the **PR Title** when merged to `main`. 
 
@@ -44,10 +53,10 @@ Our GitHub Action calculates the next version number based on the **PR Title** w
 
 > **Note:** Including `BREAKING CHANGE` in the PR description will also trigger a **Major** version bump.
 
-## 📝 Changelogs
+## :notebook: Changelogs
 Each module maintains its own `CHANGELOG.md`. The CI bot automatically appends the PR title and version number to the relevant module's changelog upon merging.
 
-## 🛠️ Local Development Tips
+## :wrench: Local Development Tips
 
 ### Requirements
 * **Java 11**
